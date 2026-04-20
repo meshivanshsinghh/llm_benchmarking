@@ -4,6 +4,8 @@ Benchmarking LLM serving frameworks across GPU generations using industry-standa
 
 Tested on NVIDIA A10G (Ampere, 24 GB) and H100 (Hopper, 80 GB) with Llama 3.1 8B AWQ-INT4, 300 ShareGPT prompts per concurrency level, and P50/P95/P99 percentile reporting.
 
+Read [Medium post](https://medium.com/@me.shivansh007/benchmarking-sglang-vllm-and-ollama-0179e3a5cbaa)
+
 This work extends [DASH Lab's vLLM vs Ollama benchmark](https://www.linkedin.com/posts/het1074_ai-machinelearning-gpucomputing-activity-7385761845372170240-hgpA) at Northeastern University by adding SGLang and cross-GPU analysis.
 
 ---
