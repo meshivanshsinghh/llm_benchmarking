@@ -4,7 +4,7 @@ Benchmarking LLM serving frameworks across GPU generations using industry-standa
 
 Tested on NVIDIA A10G (Ampere, 24 GB) and H100 (Hopper, 80 GB) with Llama 3.1 8B AWQ-INT4, 300 ShareGPT prompts per concurrency level, and P50/P95/P99 percentile reporting.
 
-This work extends [DASH Lab's vLLM vs Ollama benchmark](https://damore-mckim.northeastern.edu) at Northeastern University by adding SGLang and cross-GPU analysis.
+This work extends [DASH Lab's vLLM vs Ollama benchmark](https://www.linkedin.com/posts/het1074_ai-machinelearning-gpucomputing-activity-7385761845372170240-hgpA) at Northeastern University by adding SGLang and cross-GPU analysis.
 
 ---
 
@@ -25,14 +25,11 @@ Ollama collapses above 8 concurrent users — dropping to 0.7% success rate at 1
 
 ## Charts
 
-### Throughput scaling
+### Throughput scaling across both GPUs
 
-SGLang leads at every concurrency level on both GPUs. On H100, the gap widens to 3.4x.
+![A10G throughput](charts/01_throughput_a10g.png)
 
-<p float="left">
-  <img src="charts/01_throughput_a10g.png" width="48%" />
-  <img src="charts/02_throughput_h100.png" width="48%" />
-</p>
+![H100 throughput](charts/02_throughput_h100.png)
 
 ### Cross-GPU scaling
 
@@ -40,32 +37,11 @@ SGLang benefits more from the A10G → H100 upgrade (5.4x) than vLLM (2.5x).
 
 ![Cross-GPU scaling](charts/05_cross_gpu_scaling.png)
 
-### Single-request latency
-
-What a user actually feels. Only SGLang on H100 falls within the interactive zone (under 1 second).
-
-![Single request latency](charts/06_single_request_latency.png)
-
-### Throughput-latency tradeoff
-
-Pareto frontier — bottom-right is better (high throughput, low latency). SGLang occupies the optimal region on both GPUs.
-
-<p float="left">
-  <img src="charts/03_pareto_a10g.png" width="48%" />
-  <img src="charts/04_pareto_h100.png" width="48%" />
-</p>
-
-### Tail latency at peak load
-
-TTFT P99 at 128 concurrent users. SGLang on H100 keeps tail latency at 226ms.
-
-![Tail latency](charts/07_ttft_tail_c128.png)
-
-### Ollama collapse
-
-Success rate drops from 100% to 2.7% at just 32 concurrent requests. Latency jumps to 107 seconds.
+### Ollama collapse under load
 
 ![Ollama collapse](charts/08_ollama_collapse.png)
+
+All charts available in the `charts/` directory.
 
 ---
 
@@ -119,16 +95,7 @@ llm-bench/
 │   ├── all_results_a10G.json    # A10G: vLLM, SGLang, Ollama
 │   ├── vllm_h100.json           # H100: vLLM
 │   └── sglang_h100.json         # H100: SGLang
-├── charts/
-│   ├── 01_throughput_a10g.png
-│   ├── 02_throughput_h100.png
-│   ├── 03_pareto_a10g.png
-│   ├── 04_pareto_h100.png
-│   ├── 05_cross_gpu_scaling.png
-│   ├── 06_single_request_latency.png
-│   ├── 07_ttft_tail_c128.png
-│   ├── 08_ollama_collapse.png
-│   └── summary.json
+├── charts/                      # All 8 charts (PNG + SVG)
 └── README.md
 ```
 
@@ -137,27 +104,8 @@ llm-bench/
 ## Usage
 
 ```bash
-# Create a config file
-cat > config.json << 'EOF'
-{
-    "gpu": "NVIDIA-A10G-24GB",
-    "results_dir": "./results",
-    "dataset_path": "./ShareGPT_V3_unfiltered_cleaned_split.json",
-    "num_prompts": 300,
-    "num_requests": 300,
-    "warmup_requests": 10,
-    "max_tokens": 128,
-    "timeout_sec": 120,
-    "concurrency_levels": [1, 8, 32, 64, 128],
-    "frameworks": [
-        {"name": "vllm", "base_url": "http://localhost:8000", "model": "hugging-quants/Meta-Llama-3.1-8B-Instruct-AWQ-INT4"},
-        {"name": "sglang", "base_url": "http://localhost:8001", "model": "hugging-quants/Meta-Llama-3.1-8B-Instruct-AWQ-INT4"},
-        {"name": "ollama", "base_url": "http://localhost:11434", "model": "llama3.1:8b"}
-    ]
-}
-EOF
-
-# Start a framework server, then run
+# Create a config file (see results/ for examples)
+# Start a framework server, then:
 PYTHONUNBUFFERED=1 python benchmark_client.py --config config.json
 ```
 
