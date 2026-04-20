@@ -1,0 +1,39 @@
+{
+  "peak_throughput_tps": {
+    "A10G": {
+      "vllm": 739.44,
+      "ollama": 6.89,
+      "sglang": 1151.34
+    },
+    "H100": {
+      "vllm": 1813.76,
+      "sglang": 6241.97
+    }
+  },
+  "single_request_p50_ms": {
+    "A10G": {
+      "vllm": 9522.43,
+      "ollama": 15677.23,
+      "sglang": 1409.8
+    },
+    "H100": {
+      "vllm": 4358.9,
+      "sglang": 450.4
+    }
+  },
+  "cross_gpu_speedup_c128": {
+    "vllm": 2.452883263009845,
+    "sglang": 5.421482793961819
+  },
+  "sglang_vs_vllm_throughput_c128": {
+    "A10G": 1.5570431678026613,
+    "H100": 3.441453113973183
+  },
+  "ollama_success_rate_a10g": {
+    "1": 100.0,
+    "8": 100.0,
+    "32": 2.7,
+    "64": 1.3,
+    "128": 0.7
+  }
+}
